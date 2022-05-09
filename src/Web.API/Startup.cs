@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.API.Extension;
 
 namespace Web.API
 {
@@ -26,6 +27,20 @@ namespace Web.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentityServer()
+                    .AddInMemoryClients(IdentityConfiguration.Clients)
+                    .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
+                    .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
+                    .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
+                    .AddTestUsers(IdentityConfiguration.TestUsers)
+                    .AddDeveloperSigningCredential();
+
+            services.AddAuthentication("Bearer")
+                    .AddIdentityServerAuthentication("Bearer", options =>
+                    {
+                        options.ApiName = "myApi";
+                        options.Authority = "https://localhost:5001";
+                    });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -47,6 +62,10 @@ namespace Web.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseIdentityServer();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

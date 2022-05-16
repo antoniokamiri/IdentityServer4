@@ -1,7 +1,9 @@
+using DataAcess.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.API.Extension;
+using Web.API.Service;
 
 namespace Web.API
 {
@@ -27,19 +30,15 @@ namespace Web.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityServer()
-                    .AddInMemoryClients(IdentityConfiguration.Clients)
-                    .AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
-                    .AddInMemoryApiResources(IdentityConfiguration.ApiResources)
-                    .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
-                    .AddTestUsers(IdentityConfiguration.TestUsers)
-                    .AddDeveloperSigningCredential();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<ICoffeeShopService, CoffeeShopService>();
 
             services.AddAuthentication("Bearer")
                     .AddIdentityServerAuthentication("Bearer", options =>
                     {
                         options.ApiName = "myApi";
-                        options.Authority = "https://localhost:5001";
+                        options.Authority = "https://localhost:5002";
                     });
 
             services.AddControllers();
@@ -47,6 +46,8 @@ namespace Web.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Web.API", Version = "v1" });
             });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

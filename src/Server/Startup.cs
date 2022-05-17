@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Server.Data;
 
 namespace Server
 {
@@ -28,7 +30,14 @@ namespace Server
             var assembly = typeof(Program).Assembly.GetName().Name;
             var mDefaultServerConnection = Configuration.GetConnectionString("DefaultServerConnection");
 
+            SeedData.EnsureSeedData(mDefaultServerConnection);
+
+            services.AddDbContext<AspNetIdentityDbContext>(options => options.UseSqlServer(mDefaultServerConnection, opt => opt.MigrationsAssembly(assembly)));
+
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AspNetIdentityDbContext>();
+
             services.AddIdentityServer()
+                .AddAspNetIdentity<IdentityUser>()
                 .AddConfigurationStore(option =>
                 {
                     option.ConfigureDbContext = b => b.UseSqlServer(mDefaultServerConnection, opt => opt.MigrationsAssembly(assembly));
@@ -54,6 +63,8 @@ namespace Server
             }
 
             app.UseRouting();
+
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {

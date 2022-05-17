@@ -62,9 +62,7 @@ namespace Web.API
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseIdentityServer();
+            app.UseRouting();            
 
             app.UseAuthentication();
 

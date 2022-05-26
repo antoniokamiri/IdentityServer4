@@ -32,6 +32,8 @@ namespace Server
 
             SeedData.EnsureSeedData(mDefaultServerConnection);
 
+            services.AddMvc();
+
             services.AddDbContext<AspNetIdentityDbContext>(options => options.UseSqlServer(mDefaultServerConnection, opt => opt.MigrationsAssembly(assembly)));
 
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AspNetIdentityDbContext>();

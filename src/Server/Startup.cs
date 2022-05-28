@@ -30,9 +30,7 @@ namespace Server
             var assembly = typeof(Program).Assembly.GetName().Name;
             var mDefaultServerConnection = Configuration.GetConnectionString("DefaultServerConnection");
 
-            SeedData.EnsureSeedData(mDefaultServerConnection);
-
-            services.AddMvc();
+            SeedData.EnsureSeedData(mDefaultServerConnection);            
 
             services.AddDbContext<AspNetIdentityDbContext>(options => options.UseSqlServer(mDefaultServerConnection, opt => opt.MigrationsAssembly(assembly)));
 
@@ -54,6 +52,8 @@ namespace Server
                 //.AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
                 //.AddTestUsers(IdentityConfiguration.TestUsers)
                 .AddDeveloperSigningCredential();
+
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

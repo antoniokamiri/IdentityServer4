@@ -54,11 +54,11 @@ namespace Server
                     new Client
                     {
                         ClientId = "Interative.client",
-                        AllowedGrantTypes = GrantTypes.ClientCredentials,
+                        AllowedGrantTypes = GrantTypes.Code,
                         ClientSecrets = { new Secret("secret1".Sha256()) },
-                        RedirectUris = {"https://localhost:5001/signin-oidc"},
-                        FrontChannelLogoutUri = "https://localhost:5001/signout-oidc",
-                        PostLogoutRedirectUris = {"https://localhost:5001/signout-callback-oidc"},
+                        RedirectUris = {"https://localhost:5004/signin-oidc", "http://localhost:39256/signin-oidc", "http://localhost:5005/signin-oidc"},
+                        FrontChannelLogoutUri = "https://localhost:5004/signout-oidc",
+                        PostLogoutRedirectUris = {"https://localhost:5004/signout-callback-oidc"},
                         AllowOfflineAccess = true,
                         AllowedScopes = {"openid", "profile", "myApi.read"},
                         RequirePkce = true,

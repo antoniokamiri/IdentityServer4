@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Client.Service;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -16,9 +18,13 @@ namespace Client.Pages
         private List<CoffeeShopModel> Shops = new();
         [Inject] private HttpClient httpClient { get; set; }
         [Inject] private IConfiguration Config { get; set; }
+        [Inject] private ITokenService tokenService { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+            var tokenResponse = await tokenService.GetToken("myApi.read");
+            httpClient.SetBearerToken(tokenResponse.AccessToken);
+
             var result = await httpClient.GetAsync(Config["apiUrl"] + "/api/CoffeeShop");
 
             if(result.IsSuccessStatusCode)
